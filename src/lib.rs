@@ -29,8 +29,9 @@ pub struct LogData {
 /// Scorched version, has no internal use
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-/// The crate statics for the logging path and prefix
+/// The log path, defaults to "logs/"
 pub static LOG_PATH: OnceLock<&str> = OnceLock::new();
+/// The log prefix, defaults to ""
 pub static LOG_PREFIX: OnceLock<&str> = OnceLock::new();
 
 /// Changes the environment variable for logging path
