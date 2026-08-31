@@ -3,7 +3,7 @@
 A simple logging library for scorching all those pesky bugs.
 
 > [!NOTE]
-> The current minimum supported Rust version is: 1.60.0 (Last checked on 8/31/2026)
+> The current minimum supported Rust version is: 1.70.0 (Last checked on 8/31/2026)
 
 ## Example
 
