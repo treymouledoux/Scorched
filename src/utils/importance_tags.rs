@@ -1,5 +1,5 @@
-/// This file contains the tags for the different levels of importance.
-/// These are used in front of the message when logging and are colored.
+//! This file contains the tags for the different levels of importance.
+//! These are used in front of the message when logging and are colored.
 
 /// Error tag displays red.
 pub(crate) const ERROR_TAG: &str = "\x1b[31m[ERROR]\x1b[0m";

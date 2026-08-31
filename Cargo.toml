@@ -1,8 +1,9 @@
 [package]
 name = "scorched"
 description = "A simple logging library for scorching all those pesky bugs."
-version = "0.5.3"
+version = "0.5.4"
 edition = "2021"
+rust-version = "1.70"
 license = "Apache-2.0"
 
 [dependencies]

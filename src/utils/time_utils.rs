@@ -3,6 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::{LogExpect, LogImportance};
 
+/// Specifies the time format used for the logs support DT, D, and T
 pub(crate) enum TimeFormat {
     DateTime,
     Date,
@@ -27,14 +28,10 @@ pub(crate) fn get_formatted_time(time_format: TimeFormat) -> String {
         TimeFormat::DateTime => time.split('+').collect::<Vec<&str>>()[0]
             .to_string()
             .replace('T', " "),
-        TimeFormat::Date => time.split('+').collect::<Vec<&str>>()[0]
-            .to_string()
-            .split('T')
+        TimeFormat::Date => time.split('+').collect::<Vec<&str>>()[0].split('T')
             .collect::<Vec<&str>>()[0]
             .to_string(),
-        TimeFormat::Time => time.split('T').collect::<Vec<&str>>()[1]
-            .to_string()
-            .split('+')
+        TimeFormat::Time => time.split('T').collect::<Vec<&str>>()[1].split('+')
             .collect::<Vec<&str>>()[0]
             .to_string(),
     }
