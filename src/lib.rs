@@ -61,18 +61,26 @@ pub fn set_log_prefix(prefix: String) {
 /// Logs the given data to the console with the error type and then to a file
 pub fn log_this(data: LogData) {
     // Creates logs folder if it doesn't exist
-    if !std::path::Path::new(LOG_PATH.get().unwrap_or(&"logs/")).exists() {
-        std::fs::create_dir_all(LOG_PATH.get().unwrap_or(&"logs/")).log_expect(
-            LogImportance::Error,
-            "Failed to create full path to logs folder",
-        );
+        let log_path = LOG_PATH.get().unwrap_or(&"logs/");
+
+    if !std::path::Path::new(log_path).exists() {
+        if let Err(e) = std::fs::create_dir_all(log_path) {
+            eprintln!("[logging] failed to create log dir {log_path:?}: {e}");
+            return; // bail out — do NOT recurse through the logger
+        }
     }
 
-    let file = OpenOptions::new().append(true).create(true).open(format!(
+    let mut file = match OpenOptions::new().append(true).create(true).open(format!(
         "{}{}.log",
-        LOG_PATH.get().unwrap_or(&"logs/"),
+        log_path,
         time_utils::get_formatted_time(time_utils::TimeFormat::Date)
-    ));
+    )) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("[logging] failed to open log file: {e}");
+            return;
+        }
+    };
 
     // Appends the prefix to the message if it exists
     let message = {
@@ -110,10 +118,10 @@ pub fn log_this(data: LogData) {
     }
 
     match data.importance {
-        LogImportance::Error => write_log(LogImportance::Error, &message, &mut file.unwrap()),
-        LogImportance::Warning => write_log(LogImportance::Warning, &message, &mut file.unwrap()),
-        LogImportance::Info => write_log(LogImportance::Info, &message, &mut file.unwrap()),
-        LogImportance::Debug => write_log(LogImportance::Debug, &message, &mut file.unwrap()),
+        LogImportance::Error => write_log(LogImportance::Error, &message, &mut file),
+        LogImportance::Warning => write_log(LogImportance::Warning, &message, &mut file),
+        LogImportance::Info => write_log(LogImportance::Info, &message, &mut file),
+        LogImportance::Debug => write_log(LogImportance::Debug, &message, &mut file),
     }
 }
 
