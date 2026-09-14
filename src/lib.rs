@@ -98,15 +98,12 @@ pub fn log_this(data: LogData) {
             LogImportance::Debug => (DEBUG_TAG, "DEBUG"),
         };
 
-        if let Err(e) = file.write_all(
-            format!(
-                "{} [{}] {}\n",
-                time_utils::get_formatted_time(time_utils::TimeFormat::DateTime),
-                tag.1,
-                message
-            )
-            .as_bytes(),
-        ) {
+        let line = time_utils::format_log_line(
+            tag.1,
+            message,
+            &time_utils::get_formatted_time(time_utils::TimeFormat::DateTime),
+        );
+        if let Err(e) = file.write_all(line.as_bytes()) {
             eprintln!("[logging] failed to write to log file: {e}");
         }
 
