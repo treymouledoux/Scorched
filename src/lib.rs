@@ -61,12 +61,12 @@ pub fn set_log_prefix(prefix: String) {
 /// Logs the given data to the console with the error type and then to a file
 pub fn log_this(data: LogData) {
     // Creates logs folder if it doesn't exist
-        let log_path = LOG_PATH.get().unwrap_or(&"logs/");
+    let log_path = LOG_PATH.get().unwrap_or(&"logs/");
 
     if !std::path::Path::new(log_path).exists() {
         if let Err(e) = std::fs::create_dir_all(log_path) {
             eprintln!("[logging] failed to create log dir {log_path:?}: {e}");
-            return; // bail out — do NOT recurse through the logger
+            return;
         }
     }
 
@@ -98,7 +98,7 @@ pub fn log_this(data: LogData) {
             LogImportance::Debug => (DEBUG_TAG, "DEBUG"),
         };
 
-        file.write_all(
+        if let Err(e) = file.write_all(
             format!(
                 "{} [{}] {}\n",
                 time_utils::get_formatted_time(time_utils::TimeFormat::DateTime),
@@ -106,8 +106,9 @@ pub fn log_this(data: LogData) {
                 message
             )
             .as_bytes(),
-        )
-        .unwrap();
+        ) {
+            eprintln!("[logging] failed to write to log file: {e}");
+        }
 
         println!(
             "{} {} {}",
@@ -117,12 +118,7 @@ pub fn log_this(data: LogData) {
         );
     }
 
-    match data.importance {
-        LogImportance::Error => write_log(LogImportance::Error, &message, &mut file),
-        LogImportance::Warning => write_log(LogImportance::Warning, &message, &mut file),
-        LogImportance::Info => write_log(LogImportance::Info, &message, &mut file),
-        LogImportance::Debug => write_log(LogImportance::Debug, &message, &mut file),
-    }
+    write_log(data.importance, &message, &mut file);
 }
 
 pub trait LogExpect<T, E: Debug> {
