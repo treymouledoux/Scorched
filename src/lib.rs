@@ -118,11 +118,13 @@ pub fn log_this(data: LogData) {
     write_log(data.importance, &message, &mut file);
 }
 
-pub trait LogExpect<T, E: Debug> {
+pub trait LogExpect<T> {
+    #[track_caller]
     fn log_expect(self, importance: LogImportance, msg: &str) -> T;
 }
 
-impl<T, E: Debug> LogExpect<T, E> for Result<T, E> {
+impl<T, E: Debug> LogExpect<T> for Result<T, E> {
+    #[track_caller]
     fn log_expect(self, importance: LogImportance, msg: &str) -> T {
         match self {
             Ok(val) => val,
@@ -138,7 +140,8 @@ impl<T, E: Debug> LogExpect<T, E> for Result<T, E> {
     }
 }
 
-impl<T> LogExpect<T, ()> for Option<T> {
+impl<T> LogExpect<T> for Option<T> {
+    #[track_caller]
     fn log_expect(self, importance: LogImportance, msg: &str) -> T {
         match self {
             Some(val) => val,
