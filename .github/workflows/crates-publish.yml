@@ -1,26 +1,24 @@
-on:
-  push:
-    branches: [ "master" ]
-    paths:
-      - 'Cargo.toml'
-
 name: Publish
 
+on:
+  push:
+    branches: [master]
+    paths: [Cargo.toml]
+
+permissions:
+  contents: read
+
 jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
   publish:
     name: Publish
+    needs: checks
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - run: cargo publish --token ${CRATES_TOKEN}
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo publish --locked
         env:
-          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_TOKEN }}

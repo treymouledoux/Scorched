@@ -1,10 +1,13 @@
 [package]
 name = "scorched"
 description = "A simple logging library for scorching all those pesky bugs."
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 rust-version = "1.70"
-license = "Apache-2.0"
+license = "MIT"
+repository = "https://github.com/treymouledoux/Scorched"
+readme = "README.md"
+include = ["/src/**", "/tests/**", "/Cargo.toml", "/Cargo.lock", "/README.md", "/LICENSE", "/CHANGELOG.md"]
 
 [dependencies]
-chrono = "0.4.45"
+chrono = { version = "0.4.45", default-features = false, features = ["std"] }
